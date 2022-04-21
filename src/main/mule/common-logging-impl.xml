@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+	<json-logger:config name="JSON_Logger_Config" doc:name="JSON Logger Config" doc:id="1ab07cfa-2666-4f44-8123-d925f5a43568" environment="${mule.env}" />
+	<flow name="common-logging" doc:id="0ec44a3c-4def-49c4-a42d-8116b8fd1a1d" >
+		<json-logger:logger doc:name="Logger" doc:id="4dbd6f5d-4be9-4ea4-8ec8-00947a1c1de1" config-ref="JSON_Logger_Config" message="#[vars.logMessage]" tracePoint="#[vars.tracePoint]" priority="#[vars.logLevel]">
+			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
+{
+    payload: JSONLoggerModule::stringifyNonJSON(vars.logContent) 
+}]]]></json-logger:content>
+		</json-logger:logger>
+		<error-handler ref="common-error-handler" />
+	</flow>
+</mule>

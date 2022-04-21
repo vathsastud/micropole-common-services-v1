@@ -1,0 +1,378 @@
+#This file describes a list of preconfigured errors a mule application could throw
+#Param: httpStatus - This denotes the status code to be used for the exception
+#Param: errorSummary - This denotes the summary of the error to be displayed in the response when the full details of the error should not be returned.
+#Param: errorCode - This is a numeric identifier for a specific error allowing API Consumers to reference a particular error code without providing detailed internal information to them.
+#Param: returnError - This denotes whether to return the error.description in the response. Default is FALSE.
+#Param: returnDownstreamError - This denotes whether to include a JSON representation of the response payload (for errors such as HTTP) in the error response.
+errorMapping:
+  APIKIT:
+    BAD_REQUEST:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "001"
+      returnError: "true"
+      returnDownstreamError: "true"
+    NOT_FOUND:
+      httpStatus: "404"
+      errorSummary: "The requested URI cannot be mapped to a resource, please check the validity of the endpoint"    
+      errorCode: "002"
+      returnError: "true"
+      returnDownstreamError: "true"
+    METHOD_NOT_ALLOWED:
+      httpStatus: "405"
+      errorSummary: "Method Not Allowed"
+      errorCode: "003"
+      returnError: "true"
+      returnDownstreamError: "true"
+    NOT_ACCEPTABLE:
+      httpStatus: "406"
+      errorSummary: "Not Acceptable"    
+      errorCode: "004"
+      returnError: "true"
+      returnDownstreamError: "true"
+    UNSUPPORTED_MEDIA_TYPE:
+      httpStatus: "415"
+      errorSummary: "Unsupported Media Type"    
+      errorCode: "005"
+      returnError: "true"
+      returnDownstreamError: "true"
+    NOT_IMPLEMENTED:
+      httpStatus: "501"
+      errorSummary: "Not Implemented"
+      errorCode: "006"
+      returnError: "true"
+      returnDownstreamError: "true"
+    RETRY_EXHAUSTED:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"
+      errorCode: "059"
+      returnError: "true"
+      returnDownstreamError: "true"
+  HTTP:
+    BAD_REQUEST:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "007"
+      returnError: "true"
+      returnDownstreamError: "true"
+    PARSING:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "008"
+      returnError: "true"
+      returnDownstreamError: "true"
+    CLIENT_SECURITY:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "009"
+      returnError: "true"
+      returnDownstreamError: "true"
+    SECURITY:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "010"
+      returnError: "true"
+      returnDownstreamError: "true"
+    FORBIDDEN:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "011"
+      returnError: "true"
+      returnDownstreamError: "true"
+    UNAUTHORIZED:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "012"
+      returnError: "true"
+      returnDownstreamError: "true"
+    NOT_FOUND:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "013"  
+      returnError: "true"
+      returnDownstreamError: "true"    
+    METHOD_NOT_ALLOWED:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"
+      errorCode: "014"
+      returnError: "true"
+      returnDownstreamError: "true"
+    NOT_ACCEPTABLE:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "015"
+      returnError: "true"
+      returnDownstreamError: "true"
+    UNSUPPORTED_MEDIA_TYPE:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "016"
+      returnError: "true"
+      returnDownstreamError: "true"
+    TOO_MANY_REQUESTS:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "017"
+      returnError: "true"
+      returnDownstreamError: "true"
+    INTERNAL_SERVER_ERROR:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "018"
+      returnError: "true"
+      returnDownstreamError: "true"
+    CONNECTIVITY:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "019"
+      returnError: "true"
+      returnDownstreamError: "true"
+    RETRY_EXHAUSTED:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "020"
+      returnError: "true"
+      returnDownstreamError: "true"
+    TIMEOUT:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "021"
+      returnError: "true"
+      returnDownstreamError: "true"
+    BASIC_AUTHENTICATION:
+      httpStatus: "401"
+      errorSummary: "Invalid Authentication"    
+      errorCode: "999"
+      returnError: "true"
+      returnDownstreamError: "true"
+  SALESFORCE:
+    CONNECTIVITY:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "022"
+      returnError: "true"
+      returnDownstreamError: "true"
+    RETRY_EXHAUSTED:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "023"
+      returnError: "true"
+      returnDownstreamError: "true"
+    MUTUAL_AUTHENTICATION_FAILED:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "024"
+    INVALID_INPUT:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "025"
+      returnError: "true"
+      returnDownstreamError: "true"
+    LIMIT_EXCEEDED:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "026"
+      returnError: "true"
+      returnDownstreamError: "true"
+    INVALID_RESPONSE:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "027"
+      returnError: "true"
+      returnDownstreamError: "true"
+    TIMEOUT:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "028"
+      returnError: "true"
+      returnDownstreamError: "true"
+    NOT_FOUND:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "029"
+      returnError: "true"
+      returnDownstreamError: "true"
+  WSC:
+    SOAP_FAULT:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "030"
+      returnError: "true"
+      returnDownstreamError: "true"
+    TIMEOUT:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "031"
+      returnError: "true"
+      returnDownstreamError: "true"
+    BAD_RESPONSE:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "032"
+      returnError: "true"
+      returnDownstreamError: "true"
+    BAD_REQUEST:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "033"
+      returnError: "true"
+      returnDownstreamError: "true"
+    CONNECTIVITY:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "034"
+      returnError: "true"
+      returnDownstreamError: "true"
+    CANNOT_DISPATCH:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "035"
+      returnError: "true"
+      returnDownstreamError: "true"
+    RETRY_EXHAUSTED:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "036"
+      returnError: "true"
+      returnDownstreamError: "true"
+    ENCODING:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "037"
+      returnError: "true"
+      returnDownstreamError: "true"
+    INVALID_WSDL:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"    
+      errorCode: "038"
+      returnError: "true"
+      returnDownstreamError: "true"
+  VALIDATION:
+    NOT_BLANK_STRING:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "039"
+      returnError: "true"
+      returnDownstreamError: "true"
+    NOT_ELAPSED_TIME:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "040"
+      returnError: "true"
+      returnDownstreamError: "true"
+    INVALID_EMAIL:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "041"
+      returnError: "true"
+      returnDownstreamError: "true"
+    NOT_EMPTY_COLLECTION:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "042"
+      returnError: "true"
+      returnDownstreamError: "true"
+    INVALID_BOOLEAN:
+      httpStatus: "400"
+      errorSummary: "Bad Request"   
+      errorCode: "043"
+      returnError: "true"
+      returnDownstreamError: "true"
+    INVALID_IP:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "044"
+      returnError: "true"
+      returnDownstreamError: "true"
+    REJECTED_IP:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "045"
+      returnError: "true"
+      returnDownstreamError: "true"
+    BLANK_STRING:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "046"
+      returnError: "true"
+      returnDownstreamError: "true"
+    ELAPSED_TIME:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "047"
+      returnError: "true"
+      returnDownstreamError: "true"
+    EMPTY_COLLECTION:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "048"
+      returnError: "true"
+      returnDownstreamError: "true"
+    NULL:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "049"
+      returnError: "true"
+      returnDownstreamError: "true"
+    NOT_NULL:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "050"
+      returnError: "true"
+      returnDownstreamError: "true"
+    INVALID_NUMBER:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "051"
+      returnError: "true"
+      returnDownstreamError: "true"
+    INVALID_TIME:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "052"
+      returnError: "true"
+      returnDownstreamError: "true"
+    INVALID_URL:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "053"
+      returnError: "true"
+      returnDownstreamError: "true"
+    MISMATCH:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "054"
+      returnError: "true"
+      returnDownstreamError: "true"
+    INVALID_SIZE:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "055"
+      returnError: "true"
+      returnDownstreamError: "true"
+    MULTIPLE:
+      httpStatus: "400"
+      errorSummary: "Bad Request"    
+      errorCode: "056"
+      returnError: "true"
+      returnDownstreamError: "true"
+  MULE:
+    EXPRESSION:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"
+      errorCode: "057"
+      returnError: "true"
+      returnDownstreamError: "true"
+    RETRY_EXHAUSTED:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"
+      errorCode: "058"
+      returnError: "true"
+      returnDownstreamError: "true"
+  DB:
+    CONNECTIVITY:
+      httpStatus: "500"
+      errorSummary: "Internal Server Error"
+      errorCode: "057"
+      returnError: "true"
+      returnDownstreamError: "true"

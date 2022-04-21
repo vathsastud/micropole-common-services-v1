@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+<configuration-properties doc:name="Error Configuration properties" doc:id="0e7b2a07-0c99-4958-bae1-a3b067f0f61a" file="common/error-properties.yaml" />
+<configuration-properties doc:name="Environement Configuration properties" doc:id="0231c92b-1414-479a-bab8-3e60b754fb2b" file="${mule.env}/${mule.env}-properties.yaml" />
+<email:smtp-config name="serveur_smtp" doc:name="Email SMTP" doc:id="600dd37e-ce8a-4ff8-92cc-65938776b166" >
+		<email:smtp-connection host="${serveur_smtp.host}" port="${serveur_smtp.port}"/>
+	</email:smtp-config>
+	<error-handler name="common-error-handler" doc:id="ef5309b1-550d-4ccc-a56c-aa43e72dbce0" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="47d9be4c-9e19-4da0-9571-73d7bfebe250" >
+			<flow-ref doc:name="Flow Reference" doc:id="d6e1a1c4-4bae-4bfa-9af0-e0f185e2f0d8" name="common-error-logic-sub-flow"/>
+			<logger level="INFO" doc:name="Log Error" doc:id="82229387-f140-45c6-9d24-79e5a24bd842" message="#[payload]"/>
+			<choice doc:name="Choice" doc:id="fd8d634d-6fbe-423b-8a8f-abf7dfdbb321" >
+				<when expression='#[payload.error.additionalDetails.downstreamError == "No Error"]'>
+					<set-variable value="${mails_technical_errors.SendTo}" doc:name="mails_errors" doc:id="09a2ef25-61d2-4548-8c67-1e40657b4d62" variableName="mails_errors" />
+					<ee:transform doc:name="Transform Message" doc:id="daaa68ab-d82f-47af-95a4-37ff72460d9e">
+				<ee:message>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="errorMail"><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Nom du flux" : payload.header.apiName,
+	"Flow Name" : payload.header.flowName,
+	"Correlation Id" : correlationId,
+	"Code erreur" : payload.error.code,
+	//"Error Type": error.errorType.namespace ++ ":" ++ error.errorType.identifier,
+	"Error Type": if(error.errorType.identifier == 'RETRY_EXHAUSTED') (error.errorType.parentErrorType.namespace ++ ":" ++ error.errorType.parentErrorType.identifier
+	) else (error.errorType.namespace ++ ":" ++ error.errorType.identifier),
+	"Libelle de l'erreur": payload.error.description
+}]]></ee:set-variable>
+							<ee:set-variable variableName="userEmail" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.mails_errors splitBy(";")
+
+]]></ee:set-variable>
+				
+</ee:variables>
+			</ee:transform>
+					<try doc:name="Try" doc:id="0c27591d-8e7a-4e23-92f2-f04b6ddd9be6" >
+						<email:send doc:name="Send" doc:id="8b9f2fbd-f30e-4130-a918-25fb8c6f7b7d" toAddresses="#[vars.userEmail]" config-ref="serveur_smtp" fromAddress="error-alert-muleSoft-cargo@mulesy.com">
+						<email:body contentType="text/plain" encoding="UTF-8">
+							<email:content><![CDATA[#[vars.errorMail]]]></email:content>
+						</email:body>
+					</email:send>
+						<logger level="INFO" doc:name="Logger" doc:id="576c85b8-d105-45ae-8622-506e8385f91a" message="Error sent Via Mail" />
+						<error-handler >
+							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="12b0a877-b843-4d7e-bdb7-9f01d346981b" >
+								<logger level="INFO" doc:name="Logger" doc:id="5939c4bb-eed7-49fb-8629-3c4a1c6111cf" message="Failed To Send Error Via Mail"/>
+								<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;&#10;{&#10;	"description": error.description,&#10;	"code": "999",&#10;	"timestamp": now()&#10;}]' doc:name="set_email_error" doc:id="5d0e4e39-aac3-44f4-8847-86ed83145486" variableName="emailError"/>
+								<logger level="INFO" doc:name="emailError_and_apiError" doc:id="55e92459-0ba4-430b-b1b0-f182a530b33f" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"emailError": vars.emailError,&#10;	"apiError": vars.errorMail&#10;}]'/>
+							</on-error-continue>
+						</error-handler>
+					</try>
+				
+</when>
+				<otherwise>
+					<logger level="INFO" doc:name="Logger" doc:id="bda55ecc-9405-4169-a061-d83abb023804" message="No Need to Send Mail" />
+				
+</otherwise>
+			</choice>
+		</on-error-propagate>
+	</error-handler>
+	<flow name="common-error-logic-sub-flow" doc:id="c565e266-5158-4a58-a24b-8f66a264b427">
+		<ee:transform doc:name="Create Variables" doc:id="1826b05c-01f6-4eb2-b9b6-a8bfa33f60bc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="errorCode" ><![CDATA[%dw 2.0
+output application/java
+---
+//First check for an error code configured in the application, not common error configuration
+p('application.errorMapping.' ++ error.errorType.namespace ++ '.' ++ error.errorType.identifier ++ '.errorCode')
+default
+//If none present, check in the application, not common error configuration, for an ANY configuration for the parent type.
+p('application.errorMapping.' ++ error.errorType.namespace ++ '.ANY.errorCode')
+default
+//If none of the above find an error code, check the common error configuration for a code for the specific exception
+p('errorMapping.' ++ error.errorType.namespace ++ '.' ++ error.errorType.identifier ++ '.errorCode')
+default
+//If the common error configuration does not have a code, check for an ANY code for the parent type in the common error configuration.
+p('errorMapping.' ++ error.errorType.namespace ++ '.ANY.errorCode')
+//Fallback final error code when nothing has been configured or found.
+default "999"]]></ee:set-variable>
+				<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+//First check for an error code configured in the application, not common error configuration
+p('application.errorMapping.' ++ error.errorType.namespace ++ '.' ++ error.errorType.identifier ++ '.httpStatus')
+default
+//If none present, check in the application, not common error configuration, for an ANY configuration for the parent type.
+p('application.errorMapping.' ++ error.errorType.namespace ++ '.ANY.httpStatus')
+default
+//If none of the above find an error code, check the common error configuration for a code for the specific exception
+p('errorMapping.' ++ error.errorType.namespace ++ '.' ++ error.errorType.identifier ++ '.httpStatus')
+default
+//If the common error configuration does not have a code, check for an ANY code for the parent type in the common error configuration.
+p('errorMapping.' ++ error.errorType.namespace ++ '.ANY.httpStatus')
+//Fallback final error code when nothing has been configured or found.
+default "500"]]></ee:set-variable>
+				<ee:set-variable variableName="errorSummary" ><![CDATA[%dw 2.0
+output application/java
+---
+//First check for an error code configured in the application, not common error configuration
+p('application.errorMapping.' ++ error.errorType.namespace ++ '.' ++ error.errorType.identifier ++ '.errorSummary')
+default
+//If none present, check in the application, not common error configuration, for an ANY configuration for the parent type.
+p('application.errorMapping.' ++ error.errorType.namespace ++ '.ANY.errorSummary')
+default
+//If none of the above find an error code, check the common error configuration for a code for the specific exception
+p('errorMapping.' ++ error.errorType.namespace ++ '.' ++ error.errorType.identifier ++ '.errorSummary')
+default
+//If the common error configuration does not have a code, check for an ANY code for the parent type in the common error configuration.
+p('errorMapping.' ++ error.errorType.namespace ++ '.ANY.errorSummary')
+//Fallback final error code when nothing has been configured or found.
+default "Internal Server Error"]]></ee:set-variable>
+				<ee:set-variable variableName="returnError" ><![CDATA[%dw 2.0
+output application/java
+---
+//First check for an error code configured in the application, not common error configuration
+p('application.errorMapping.' ++ error.errorType.namespace ++ '.' ++ error.errorType.identifier ++ '.returnError')
+default
+//If none present, check in the application, not common error configuration, for an ANY configuration for the parent type.
+p('application.errorMapping.' ++ error.errorType.namespace ++ '.ANY.returnError')
+default
+//If none of the above find an error code, check the common error configuration for a code for the specific exception
+p('errorMapping.' ++ error.errorType.namespace ++ '.' ++ error.errorType.identifier ++ '.returnError')
+default
+//If the common error configuration does not have a code, check for an ANY code for the parent type in the common error configuration.
+p('errorMapping.' ++ error.errorType.namespace ++ '.ANY.returnError')
+//Fallback final error code when nothing has been configured or found.
+default 'false']]></ee:set-variable>
+				<ee:set-variable variableName="returnDownstreamError" ><![CDATA[%dw 2.0
+output application/java
+---
+//First check for an error code configured in the application, not common error configuration
+p('application.errorMapping.' ++ error.errorType.namespace ++ '.' ++ error.errorType.identifier ++ '.returnDownstreamError')
+default
+//If none present, check in the application, not common error configuration, for an ANY configuration for the parent type.
+p('application.errorMapping.' ++ error.errorType.namespace ++ '.ANY.returnDownstreamError')
+default
+//If none of the above find an error code, check the common error configuration for a code for the specific exception
+p('errorMapping.' ++ error.errorType.namespace ++ '.' ++ error.errorType.identifier ++ '.returnDownstreamError')
+default
+//If the common error configuration does not have a code, check for an ANY code for the parent type in the common error configuration.
+p('errorMapping.' ++ error.errorType.namespace ++ '.ANY.returnDownstreamError')
+//Fallback final error code when nothing has been configured or found.
+default 'false']]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Build JSON Error Response" doc:id="b02cb93e-0a75-4a4a-bfe2-4109eca4b5f3">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	header: {
+		apiName: vars.applicationName default app.name,
+		flowName: vars.flowName default flow.name,
+		apiVersion: vars.applicationVersion default "Unknown",
+		correlationId: correlationId
+	},
+	error: {
+		description: if(vars.returnError == 'true') (vars.errorSummary default "No Summary Set") ++ " - " ++ (error.description default "No Detailed Information") else (vars.errorSummary default "No Summary Set"),
+		code: vars.errorCode default "999",
+		timestamp: now(),
+		requestReference: {
+			method: attributes.method default "Unknown",
+			uri: attributes.requestUri default "Unknown"
+		},
+		(additionalDetails: {
+			downstreamError: (error.cause.errorMessage.payload default "No Error")
+		}) if(vars.returnDownstreamError == "true")
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0c23a0b6-75d9-4969-9819-c91b9b37f5cd" >
+				<logger level="ERROR" doc:name="Log Error Message" doc:id="822725a4-ece9-4a20-bcfa-6a0a47793203" message="An error has occurred inside the common error handler."/>
+				<ee:transform doc:name="Build CRITICAL Message" doc:id="f9d7d9f4-2bb3-4770-8d93-49911b5f90c0" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	header: {
+		apiName: vars.applicationName default app.name,
+		apiVersion: vars.applicationVersion default 'Unknown',
+		correlationid: correlationId
+	},
+	data: {},
+	error: {
+		description: "A CRITICAL Error has occurred.",
+		code: "999",
+		timestamp: now()
+	}
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+
+</mule>
