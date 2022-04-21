@@ -1,0 +1,13 @@
+#Development Environment Properties
+
+#SMTP Server Details
+serveur_smtp:
+  host: "192.168.2.20"
+  port: "25"
+  
+mails_technical_errors:
+  SendTo: "cargo@micropole.com"
+
+mails_functionnal_errors:
+  SendTo: "cargo@micropole.com"
+  

@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="errorResponse" format="json">
+      <types:shape format="weave" example="examples/errorResponse.json"><![CDATA[%dw 2.0
+
+type errorResponse = {|
+  errorResponse: {|
+    transationID: String, 
+    errorTimeStamp: String, 
+    errors: Array<{|      code: String,       "type": String,       description: String    |}>
+  |}
+|} {"example": "{\\\"errorResponse\\\":{\\\"transationID\\\":\\\"correlationId\\\",\\\"errorTimeStamp\\\":\\\"now\\\",\\\"errors\\\":[{\\\"code\\\":\\\"1149\\\",\\\"type\\\":\\\"BAD_SQL_SYNTAX\\\",\\\"description\\\":\\\"error.description\\\"},{\\\"code\\\":\\\"1149\\\",\\\"type\\\":\\\"BAD_SQL_SYNTAX\\\",\\\"description\\\":\\\"error.description\\\"}]}}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#17c0f958-9683-4172-99c7-1504f7dcacf8"/>
+  <types:enrichment select="#f9d5fa49-6364-4e64-a727-9db8d3811951">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="errorResponse[]"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="errorResponse"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#f7002c2a-b0a9-4171-b1b6-24eb9876aeaf">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="errorResponse"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#fd0481c0-bec5-46ac-9e78-f75f362cf542">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="errorResponse"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#8ef3ec40-3645-423b-9096-514192722fe2">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="errorResponse"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#360a7187-9f4f-4549-9556-d05cacdbd11e">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="errorResponse"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#8dd26fc7-d776-4a89-b602-0d24ad1458bb">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="errorResponse"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#1826b05c-01f6-4eb2-b9b6-a8bfa33f60bc"/>
+</types:mule>
