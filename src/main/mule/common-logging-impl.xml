@@ -14,4 +14,5 @@ http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/m
 		</json-logger:logger>
 		<error-handler ref="common-error-handler" />
 	</flow>
+	<flow name="common-logging-implFlow1" doc:id="d6c5675a-741e-4246-a86c-af00bed1a992" />
 </mule>
